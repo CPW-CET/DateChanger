@@ -1,0 +1,95 @@
+// ConsoleApplication2.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+int main()
+{
+	ifstream myfile;
+	ofstream o_myfile;
+
+	string line;
+	string inputs[10];
+	stringstream Corrected;
+
+	int index = 0;
+	int entry = 0;
+	int getNum = 0;
+	int Date[3] = { 0 };
+	int number = 0;
+	int Ones_Place = 0;
+	int Tens_Place = 0;
+	int Hundredths_Place = 0;
+	int Thousandths_Place = 0;
+
+	myfile.open("Dates.txt");
+
+	if (myfile.is_open())
+	{
+		while (getline(myfile, line))
+		{
+			inputs[index] = line;
+			index++;
+		}
+		myfile.close();
+	}
+	else
+	{
+		cout << "Unable to open file";
+	}
+
+	index = 0;
+	o_myfile.open("Outputs.txt");
+
+	while (inputs[index] != "")
+	{
+		for (size_t i = 0; i < inputs[index].length(); i++)
+		{
+			if (i > 0 && isdigit(inputs[index][i]) && isdigit(inputs[index][i-1]))
+			{
+				Tens_Place = inputs[index][i - 1] - '0';
+				Ones_Place = inputs[index][i] - '0';
+				number = Tens_Place * 10;
+				number = number + Ones_Place;
+				Date[getNum] = number;
+			}
+			else if(isdigit(inputs[index][i]))
+			{
+				Date[getNum] = inputs[index][i] - '0';
+			}
+			else
+			{
+				getNum++;
+			}
+		}
+
+		getNum = 0;
+
+		if (Date[0] > 12)
+		{
+			//------------Year--------------Month-------------Day
+			Corrected << Date[2] << '-' << Date[1] << '-' << Date[0] << '\n';
+		}
+		else
+		{
+			Date[2] += 2000;
+			//------------Year--------------Month-------------Day
+			Corrected << Date[2] << '-' << Date[1] << '-' << Date[0] << '\n';
+		}
+		entry++;
+		index++;
+	}
+
+	o_myfile << Corrected.str();
+	myfile.close();
+	o_myfile.close();
+
+	cout << "Parsing Complete" << endl;
+	system("pause");
+    return 0;
+}
